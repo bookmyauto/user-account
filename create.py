@@ -1,49 +1,52 @@
 import os
 import logging
 from bson import ObjectId
-import sys
-sys.append("../config")
-from dbconfig import dbconfig
-from otpconfig import otpconfig
-sys.append("../../SQL")
-from connect import connect
-sys.append("../../utilities")
-from error import error
-from result import result
-E       = error()
-R       = result()
-C       = connect()
-dbconf  = dbconfig()
-otpconf = otpconfig()
+from sql import Sql
+from response import Response
 
-class create:
 
-    def create_user(self, payload):
+class Create:
+
+    @staticmethod
+    def check_user_repetition(payload):
+        mydb, mycursor  = Sql.get_connection()
+
+        # get data from payload
+        number          = str(payload["number"])
+
+        # check from db
+        sql_query       = "select u_id from users where number = \'" + str(number) + "\'"
+        mycursor.execute(sql_query)
+        data            = mycursor.fetchone()
+        if len(data) == 0:
+            return 0
+        return 1
+
+    @staticmethod
+    def create_user(payload):
         mycursor            = None
         try:
-            mydb, mycursor  = C.get_connection(host = dbconf.host, user = dbconf.user, passwd = dbconf.password, database = dbconf.database)
-            _id_            = str(ObjectId())
-            _name_          = str(payload["name"])
-            _number_        = str(payload["number"])
-            _password_      = str(payload["password"])
-            # verify existence of number
-            sql             = "select u_id from users where number = " + str(_number_)
-            mycursor.execute(sql)
-            data            = mycursor.fetchone()
-            if(len(data) != 0):
-                error       = E.make_error(error = "number alreay exists", code = 406, displayError = "This number already exists.")
-                return error
-            sql             = "insert into users (u_id, name, number, password) values (%s, %s, %s, %s)"
-            val             = (_id_, _name_, _number_, _password_)
-            result          = R.make_result(result = "user created", u_id = _id_, code = 201, message = "Congrats, your account has been created.")
-            mycursor.execute(sql, val)
+            mydb, mycursor  = Sql.get_connection()
+            # get data from payload
+            u_id            = str(ObjectId())
+            name            = str(payload["name"])
+            number          = str(payload["number"])
+            password        = str(payload["password"])
+
+            # insert in db
+            sql_query       = "insert into users (u_id, name, number, password) values (%s, %s, %s, %s)"
+            val             = (u_id, name, number, password)
+            mycursor.execute(sql_query, val)
             mydb.commit()
+            result          = Response.make_result(result_code = 201, result_message = "Account created",
+                                                   display_message = "Your account has been created",
+                                                   u_id = u_id)
             mycursor.close()
             return result
         except Exception as e:
-            log.warning(e)
-            if(mycursor != None):
+            logging.warning(e)
+            if mycursor is not None:
                 mycursor.close()
-            error = E.make_error(error = "system failure", code = 500, displayError = "Oops something went wrong !")
+            error = Response.make_error(error_message = "system failure", error_code = 500, display_message = "Oops something went wrong !")
             return error
 

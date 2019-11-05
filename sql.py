@@ -1,12 +1,12 @@
 import mysql.connector
-import config as C
+import config as c
+
+
 class Sql:
-
-    '''
-    returns instance of db and cursor
-    '''
+    
+    # returns instance of db and cursor
+    @staticmethod
     def get_connection():
-        mydb        = mysql.connector.connect(host = C.host, user = C.username, passwd = C.password, database = C.database)
-        mycursor    = mydb.cursor()
+        mydb = mysql.connector.connect(host = c.host, user = c.username, passwd = c.password, database = c.database)
+        mycursor = mydb.cursor()
         return mydb, mycursor
-
