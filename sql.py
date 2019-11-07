@@ -1,12 +1,13 @@
-import mysql.connector
-import config as c
+import psycopg2
+import config
 
 
 class Sql:
     
-    # returns instance of db and cursor
+    # returns instance of cursor
     @staticmethod
     def get_connection():
-        mydb = mysql.connector.connect(host = c.host, user = c.username, passwd = c.password, database = c.database)
-        mycursor = mydb.cursor()
-        return mydb, mycursor
+        conn        = psycopg2.connect(database=config.database, user=config.user, password=config.password,
+                                host=config.host, port="5432")
+        mycursor    = conn.cursor()
+        return conn, mycursor

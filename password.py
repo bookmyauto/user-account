@@ -7,14 +7,10 @@ class Password:
 
     # change password here
     @staticmethod
-    def change_password(payload):
-        mycursor    = None
+    def change_password(number, old_password, new_password):
+        myconnecton    = None
         try:
-            mydb, mycursor = Sql.get_connection()
-            mycursor        = mydb.cursor()
-            old_password    = str(payload["old_password"])
-            new_password    = str(payload["new_password"])
-            number          = str(payload["number"])
+            myconnecton, mycursor = Sql.get_connection()
             sql_query       = "select password from users where number = %s"
             val             = str(number)
             mycursor.execute(sql_query, val)
@@ -25,7 +21,7 @@ class Password:
                     sql_query = "update users set password = %s where number = %s"
                     val = (new_password, number)
                     mycursor.execute(sql_query, val)
-                    mydb.commit()
+                    myconnecton.commit()
                     result  = Response.make_result(result_messagee = "password updated", result_ode = "201", result_message = "Password updated")
                     return result
                 else:
@@ -35,29 +31,27 @@ class Password:
                 error   = Response.make_error(error_message = "account does not exist", error_code = 405, display_message = "Account does not exist")
                 return error
         except Exception as e:
-            logging.warning(e)
-            if mycursor is not None:
-                mycursor.close()
+            if myconnecton is not None:
+                myconnecton.close()
+            logging.warning("Error in change password: " + str(e) + " |for number: " + str(number))
             error = Response.make_error(error_message = "system failure", error_code = 500, display_message = "Oops something went wrong !")
             return error
 
     # change password after forgetting
     @staticmethod
-    def forgot_password_change(payload):
-        mycursor    = None
+    def forgot_password_change(number, new_password):
+        myconnection    = None
         try:
-            mydb, mycursor  = Sql.get_connection()
-            new_password    = str(payload["new_password"])
-            number          = str(payload["number"])
+            myconnection, mycursor  = Sql.get_connection()
             sql_query       = "update users set password = %s where number = %s"
             val             = (new_password, number)
             mycursor.execute(sql_query, val)
-            mydb.commit()
+            myconnection.commit()
             result  = Response.make_result(result_message = "password updated", result_code = "200", display_message = "Password updated")
             return result
         except Exception as e:
-            logging.warning(e)
-            if mycursor is not None:
-                mycursor.close()
+            if myconnection is not None:
+                myconnection.close()
+            logging.warning("Error in forgot password: " + str(e) + " |for number: " + str(number))
             error = Response.make_error(error_message = "system failure", error_code = 500, display_message = "Oops something went wrong !")
             return error
