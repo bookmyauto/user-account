@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "bookmyauto-test",
+  "private_key_id": "a571f009deb6fde81da0f141d9eb86507cf1ad4d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCmXxZmeX9vXY0h\nEayTMRhJXyD5mvG8UqMwgwUfOQWwa6ok/CaSm1NwErWFvUznPJj+wGwg5dSZXFjv\nbH7PzxZIWLd0Foq5G6t+o2o+25r98+8yyWTPiPPfMeAytIvIZI73WH9L/QsuvSH7\nQDP2Qxa40lQmB6fDveqGXk7nVV2Y+Mjc6s47CvbAGV2s1ClaQ+tNYQAiGc3RPVgi\n1uwn7+Wlm/YZiwLakQK5h56yJel50WHiIJhl3inCZQhfbHRDBl3FmDO2KsMIq4Wt\nVETP7BMXnRWgoXlQLjHL+/omTTrPk/iM9uysCSREgxrTJQIJKFwz4pDasemtBVkD\nvhMbN5NZAgMBAAECggEAAaaHgtxpYBH2Bfd2a6lnhnF7/W3vlauI30DVgAH2pVGU\nHl96ryanqmt3wza7DhTi/FgCr/AybpO6ICSb53Te/DhrwtTnFb9esVgZWZFKgC13\ngzH4nuR1bZKW7k8t5H7hj4ugYQEcJ3UMjWu4Iup3IxNBxB98UcFPE9EuCDZ9F2OQ\nV7PFp8SHay7UPfEpIsbuPd5omPvOlSNCpzVhzCd8JBQq8R+07CdEYQ+v0hYK9wri\nkNiBr/wmlEL2Q/mCEbaO495pdNAGQ41cWNzCCdOHAuB3zQr1H//42FEaiMSU0EYv\nAzkZiwKLyDzE1WhKlRxCckRoD3iKhPORcBpOqrVcrwKBgQDhCQx35cmV0hcxqkn0\nKoyapvLSRbElKed9NfMVAYGGNyTXmUgwVDB0tNZdnoeIyHi5HP7hTNu8AoPeHnbH\nCnF83rda00ySX7Bryn+4KaNg0gzUIQlF2wQbsYAdWTklPCdGhanuwqGyMSZwEsxT\n9TK7BJWSwnUtIWCW8SM8VBexewKBgQC9Q5TUHnPFL4j+XCe9pMNyuPFgClFWDffE\nTBjL+s+kkwcXKuQbwD+qCrQwK1zdWFp0PtYJlzPzIefp5r/6kgr2IJMFKOWCh2XY\ngIyqFOaFW1viJGgISzE8Hgw6kCI6Hq4kHr/97yTacBGhbc697p2rvV6VA1QrD0BU\nvbjJ6MdEOwKBgB58CVJcsJg5I6c4uFf5Q57XquFNS5gLOy69FjbsQ02ZPsZuH1dc\nsEu/C6MXDKk87w20ndqLfODVPmPioJiKE6Gk0hXdtevGRrHzdqXODjHZgp9h8k2i\nQ8Y0n3RaV+FxaqilBsYvW5Q2EEzyXveoqbyn/FMrQJBiiyEnfWx4v9TtAoGAdceo\nxphs0zlRt3kCAjKWrr4I+Atzsmne1nnEtKvQrEoTD4fRjLOG6vreR1u03sotAEpa\nSH2gBp4DBLxknDpmN+TtmThqG2DHMIRPBUkca8D+3Sxq0T551T+dvJQVuLV/CVtZ\nf11jQcycLCl5jxj/ZfDi+zinGGTVU+b9KCmEWCECgYBnynC1iIDkcHMWEAP2tuXq\nWLG1wffL6GLpOEGnCxfiDyIbGFN5/2EON92ymAvvsIgRIMdeQ8ey/NHsbn1Okqcl\ntL7iGNzKC6Q8HRcLBln+GAKCIv4PbVxLhsxolBX0dDONP4WbUQDqsExz7EIUh7OE\nrE8RrMXsGBi+pIqe4GfT0g==\n-----END PRIVATE KEY-----\n",
+  "client_email": "bookmyauto-test@bookmyauto-test.iam.gserviceaccount.com",
+  "client_id": "100359802940251528307",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bookmyauto-test%40bookmyauto-test.iam.gserviceaccount.com"
+}

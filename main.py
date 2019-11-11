@@ -1,5 +1,6 @@
 from flask      import Flask
 from flask      import request
+from flask_api  import status
 from otp        import Otp
 from password   import Password
 from create     import Create
@@ -12,7 +13,7 @@ app             = Flask(__name__)
 default_error   = json.dumps({"error_code": 500, "error_message": "Internal server error", "disaply_message": ""})
 
 
-@app.route("/")
+@app.route("/v1")
 def working():
     return "user-account service running"
 
@@ -47,6 +48,7 @@ def password():
             if action == "change":
                 old_password    = request.form["old_password"]
                 response        = Password.change_password(number, old_password, new_password)
+                logging.debug("Responded to password request")
                 return response
             if action == "forgot":
                 response        = Password.forgot_password_change(number, new_password)
@@ -73,11 +75,27 @@ def createuser():
             user_password   = request.form["password"]
             response        = Create.create_user(user_name, user_number, user_password)
             logging.debug("createuser returned:\n" + str(dict(request.form)))
-            return response
+            logging.debug("Responded to create user request")
+            return response, status.HTTP_201_CREATED
     except RuntimeError as e:
         logging.critical("failure in v1/createuser with error: " + str(e) + " |for request: " + str(dict(request.form)))
         return default_error
 
 
+@app.route("/v1/updateuser", methods = ["POST"])
+def updateuser():
+    try:
+        if request.method == "POST":
+            number      = request.form["number"]
+            name        = request.form["name"]
+            photo_link  = request.form["profile_pic_link"]
+            response    = Create.update_user(number, name, photo_link)
+            logging.debug("Responded to update user request")
+            return response
+    except RuntimeError as e:
+        logging.critical("failure in v1/updateuser with error: " + str(e) + " |for request: " + str(dict(request.form)))
+        return default_error
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=7001, debug=True)

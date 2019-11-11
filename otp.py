@@ -1,8 +1,8 @@
-import logging
-import requests
-import config
-from sql import Sql
-from response import Response
+import  logging
+import  requests
+import  config
+from    sql import Sql
+from    response import Response
 
 
 class Otp:
@@ -13,24 +13,28 @@ class Otp:
         myconnection    = None
         try:
             myconnection, mycursor  = Sql.get_connection()
+            logging.debug("Connection and cursor received")
             response                = dict(requests.get("https://2factor.in/API/V1/" + str(config.api_key_2factor) + "/SMS/+91" + str(number)[-10:]+ "/AUTOGEN"))
             if response["Status"] == "Success":
                 session_id          = response["Details"]
+                logging.debug("OTP created successfully with session id: " + str(session_id))
                 sql_query           = "insert into user_otp (number, session_id) values (%s, %s)"
                 val                 = (number, session_id)
                 result              = Response.make_result(result_code = 200, result_message = "OTP sent", display_message = "Please enter otp")
                 mycursor.execute(sql_query, val)
                 myconnection.commit()
                 myconnection.close()
+                logging.debug("Connection closed")
                 return result
             else:
                 myconnection.close()
+                logging.warning("OTP could not be created")
                 error               = Response.make_error(error_code = 500, error_message = "Otp system failure", display_message = "Oops something went wrong !")
                 return error
         except Exception as e:
             if myconnection is not None:
                 myconnection.close()
-            logging.warning("Error in create otp: " + str(e) + " |for number: " + str(number))
+            logging.error("Error in create otp: " + str(e) + " |for number: " + str(number))
             error = Response.make_error(error_code = 500, error_message = "System failure", display_message = "Oops something went wrong !")
             return error
 
@@ -40,6 +44,7 @@ class Otp:
         myconnection            = None
         try:
             myconnection, mycursor  = Sql.get_connection()
+            logging.debug("Connection and cursor received")
             sql_query       = "select session_id from user_otp where number = " + str(number)
             mycursor.execute(sql_query)
             data            = mycursor.fetchone(sql_query)
@@ -52,14 +57,16 @@ class Otp:
                 myconnection.commit()
                 result          = Response.make_result(result_code = 202, result_message = "OTP matched", disply_message = "Otp matched successfully")
                 myconnection.close()
+                logging.debug("OTP verified successfully")
                 return result
             else:
-                error           = Response.make_error(error_code = 200, error_message = "OTP mismatched", display_message = "otp does not match")
                 myconnection.close()
+                logging.debug("OTP could not be verified")
+                error           = Response.make_error(error_code = 200, error_message = "OTP mismatched", display_message = "otp does not match")
                 return error
         except Exception as e:
             if myconnection is not None:
                 myconnection.close()
-            logging.warning("Error in verify otp: " + str(e) +  " |for number: " + str(number))
+            logging.error("Error in verify otp: " + str(e) + " |for number: " + str(number))
             error = Response.make_error(error_code = 500, error_message = "system failure", display_message = "Oops something went wrong !")
             return error
