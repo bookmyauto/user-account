@@ -4,7 +4,6 @@ WORKDIR /opt
 RUN ls
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 RUN pip3 install -r requirements.txt
-EXPOSE 80
 CMD ["python3", "main.py"]
 
 
