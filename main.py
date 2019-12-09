@@ -7,15 +7,25 @@ from create     import Create
 import logging
 import json
 
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
 logging.basicConfig(level=logging.DEBUG)
 app             = Flask(__name__)
 
-default_error   = json.dumps({"error_code": 500, "error_message": "Internal server error", "disaply_message": ""})
+default_error   = json.dumps({"error_code": 500, "error_message": "System failure", "display_message": "Oops something went wrong !"})
 
-
+logging.info("python code started")
+        
 @app.route("/v1")
 def working():
-    return "user-account service running"
+    return {"response":"user-account service running"}
 
 
 # otp related actions
@@ -23,64 +33,40 @@ def working():
 def otp():
     try:
         if request.method == "GET":
-            action  = request.form["action"]
             number  = request.form["number"]
-            if action == "create":
+            logging.debug("incoming request: number = " + str(number))
+            if "otp" not in request.form:
                 response = json.dumps(Otp.create_otp(number))
                 return response
-            if action == "verify":
+            else:
                 user_otp    = request.form["otp"]
-                response    = json.dump(Otp.verify_otp(number, user_otp))
+                logging.debug("incoming request: otp = " + str(otp))
+                response    = json.dumps(Otp.verify_otp(number, user_otp))
                 return response
     except RuntimeError as e:
-        logging.critical("failure in v1/otp with error: " + str(e) + " |for request: " + str(request.form))
+        logging.critical("failure in v1/otp with error: " + str(e))
         return default_error
-
-
-# password related actions
-@app.route("/v1/password", methods = ["POST"])
-def password():
-    try:
-        if request.method == "POST":
-            action          = request.form["action"]
-            number          = request.form["number"]
-            new_password    = request.form["new_password"]
-            if action == "change":
-                old_password    = request.form["old_password"]
-                response        = Password.change_password(number, old_password, new_password)
-                logging.debug("Responded to password request")
-                return response
-            if action == "forgot":
-                response        = Password.forgot_password_change(number, new_password)
-                return response
-    except RuntimeError as e:
-        logging.critical("failure in v1/password with error: " + str(e) + " |for request: " + str(request.form))
-        return default_error
-
 
 # creation of user is handled here
 @app.route("/v1/createuser", methods = ["GET", "POST"])
 def createuser():
     try:
         if request.method == "GET":
-            logging.debug("GET request received in createuser with request:\n" + str(dict(request.form)))
+            logging.debug("incoming GET request: " + str(dict(request.form)))
             user_number     = request.form["number"]
             response        = Create.check_user_repetition(user_number)
-            logging.debug("createuser returned:\n" + str(dict(request.form)))
+            logging.debug("createuser returned: " + str(response))
             return response
         if request.method == "POST":
-            logging.debug("POST request received in createuser with request:\n" + str(request.form))
+            logging.debug("incoming POST request: " + str(request.form))
             user_name       = request.form["name"]
             user_number     = request.form["number"]
-            user_password   = request.form["password"]
-            response        = Create.create_user(user_name, user_number, user_password)
-            logging.debug("createuser returned:\n" + str(dict(request.form)))
-            logging.debug("Responded to create user request")
-            return response, status.HTTP_201_CREATED
+            response        = Create.create_user(user_number, user_name)
+            logging.debug("createuser returned:\n" + str(response))
+            return response
     except RuntimeError as e:
-        logging.critical("failure in v1/createuser with error: " + str(e) + " |for request: " + str(dict(request.form)))
+        logging.critical("failure in v1/createuser with error: " + str(e))
         return default_error
-
 
 @app.route("/v1/updateuser", methods = ["POST"])
 def updateuser():
@@ -98,4 +84,4 @@ def updateuser():
 
 
 if __name__ == '__main__':
-    app.run(port=7001, debug=True)
+    app.run(host='0.0.0.0', port=7002, debug=True, ssl_context='adhoc')
