@@ -2,7 +2,6 @@ from flask      import Flask
 from flask      import request
 from flask_api  import status
 from otp        import Otp
-from password   import Password
 from create     import Create
 import logging
 import json
@@ -19,7 +18,7 @@ else:
 logging.basicConfig(level=logging.DEBUG)
 app             = Flask(__name__)
 
-default_error   = json.dumps({"error_code": 500, "error_message": "System failure", "display_message": "Oops something went wrong !"})
+default_error   = json.dumps({"errorCode": 500, "errorMessage": "System failure", "displayMessage": "Oops something went wrong !"})
 
 logging.info("python code started")
         
@@ -84,4 +83,4 @@ def updateuser():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=7002, debug=True, ssl_context='adhoc')
+    app.run(host='0.0.0.0', debug=True, port=7002, ssl_context='adhoc')

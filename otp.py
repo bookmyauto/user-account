@@ -4,6 +4,7 @@ import  config
 import  json
 from    sql import Sql
 from    response import Response
+from    create import Create
 
 
 class Otp:
@@ -25,19 +26,19 @@ class Otp:
                 cur.execute(sql_query.format(number, session_id))
                 conn.commit()
                 logging.debug("Connection closed")
-                result              = Response.make_result(result_code = 200, result_message = "OTP sent", display_message = "Please enter otp")
+                result              = Response.make_response(200, "OTP sent", "Please enter otp")
                 conn.close()
                 return result
             else:
                 logging.warning("OTP could not be created")
-                error = Response.make_error(error_code = 500, error_message = "System failure", display_message = "Oops something went wrong !")
+                error = Response.make_response(500, "System failure", "Oops something went wrong !")
                 conn.close()
                 return error
         except Exception as e:
             if conn is not None:
                 conn.close()
             logging.error("Error in create_otp: " + str(e))
-            error = Response.make_error(error_code = 500, error_message = "System failure", display_message = "Oops something went wrong !")
+            error = Response.make_response(500, "System failure", "Oops something went wrong !")
             return error
 
     # code to verify otp
@@ -58,18 +59,27 @@ class Otp:
                 sql_query           = "update user_otp set otp_verified = 1 where number = " + str(number)
                 cur.execute(sql_query)
                 conn.commit()
-                result              = Response.make_result(result_code = 200, match = 1, result_message = "OTP matched", display_message = "OTP matched successfully")
-                logging.debug("OTP verified successfully")
-                conn.close()
-                return result
+                response            = Create.check_user_repetition(number)
+                if "present" in response:
+                    if response["present"]  == 1:
+                        result              = Response.make_response(200, "OTP matched", "OTP matched successfully", action = "login", match = 1)
+                    if response["present"]  == 0:
+                        result              = Response.make_response(200, "OTP matched", "OTP matched successfully", action = "signUp", match = 1)
+                    logging.debug("OTP verified successfully")
+                    conn.close()
+                    return result
+                else:
+                    conn.close()
+                    error               = Response.make_response(500, "System failure", "Oops something went wrong !")
+                    return error
             else:
                 logging.debug("OTP could not be verified")
-                error               = Response.make_result(result_code = 200, match = 0, result_message = "OTP mismatched", display_message = "OTP does not match")
+                error               = Response.make_response(200, "OTP mismatched", "OTP does not match", match = 0)
                 conn.close()
                 return error
         except Exception as e:
             if conn is not None:
                 conn.close()
             logging.error("Error in verify_otp: " + str(e))
-            error               = Response.make_error(error_code = 500, error_message = "System failure", display_message = "Oops something went wrong !")
+            error               = Response.make_response(500, "System failure", "Oops something went wrong !")
             return error
