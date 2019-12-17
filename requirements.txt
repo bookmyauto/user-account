@@ -1,4 +1,6 @@
 pymongo
+pyopenssl
+pymysql
 flask
 flask_api
 requests
