@@ -15,7 +15,7 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 app             = Flask(__name__)
 
 default_error   = json.dumps({"errorCode": 500, "errorMessage": "System failure", "displayMessage": "Oops something went wrong !"})
@@ -32,13 +32,13 @@ def working():
 def otp():
     try:
         if request.method == "GET":
-            number  = request.form["number"]
+            number  = request.args["number"]
             logging.debug("incoming request: number = " + str(number))
             if "otp" not in request.form:
                 response = json.dumps(Otp.create_otp(number))
                 return response
             else:
-                user_otp    = request.form["otp"]
+                user_otp    = request.args["otp"]
                 logging.debug("incoming request: otp = " + str(otp))
                 response    = json.dumps(Otp.verify_otp(number, user_otp))
                 return response
@@ -51,8 +51,8 @@ def otp():
 def createuser():
     try:
         if request.method == "GET":
-            logging.debug("incoming GET request: " + str(dict(request.form)))
-            user_number     = request.form["number"]
+            logging.debug("incoming GET request: " + str(dict(request.args)))
+            user_number     = request.args["number"]
             response        = Create.check_user_repetition(user_number)
             logging.debug("createuser returned: " + str(response))
             return response
