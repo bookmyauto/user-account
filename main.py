@@ -15,7 +15,7 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.DEBUG)
 app             = Flask(__name__)
 
 default_error   = json.dumps({"errorCode": 500, "errorMessage": "System failure", "displayMessage": "Oops something went wrong !"})
@@ -34,7 +34,7 @@ def otp():
         if request.method == "GET":
             number  = request.args["number"]
             logging.debug("incoming request: number = " + str(number))
-            if "otp" not in request.form:
+            if "otp" not in request.args:
                 response = json.dumps(Otp.create_otp(number))
                 return response
             else:
