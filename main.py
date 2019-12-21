@@ -27,23 +27,32 @@ def working():
     return {"response":"user-account service running"}
 
 
-# otp related actions
+# otp create related actions
 @app.route("/v1/otp", methods=["GET"])
-def otp():
+def otp_create():
     try:
         if request.method == "GET":
             number  = request.args["number"]
             logging.debug("incoming request: number = " + str(number))
-            if "otp" not in request.args:
-                response = json.dumps(Otp.create_otp(number))
-                return response
-            else:
-                user_otp    = request.args["otp"]
-                logging.debug("incoming request: otp = " + str(otp))
-                response    = json.dumps(Otp.verify_otp(number, user_otp))
-                return response
+            response = json.dumps(Otp.create_otp(number))
+            return response
     except RuntimeError as e:
         logging.critical("failure in v1/otp with error: " + str(e))
+        return default_error
+
+# otp verify related actions
+@app.route("/v1/otp/verify", methods=["GET"])
+def otp_verify():
+    try:
+        if request.method == "GET":
+            number  = request.args["number"]
+            logging.debug("incoming request: number = " + str(number))
+            user_otp    = request.args["otp"]
+            logging.debug("incoming request: otp = " + str(user_otp))
+            response    = json.dumps(Otp.verify_otp(number, user_otp))
+            return response
+    except RuntimeError as e:
+        logging.critical("failure in v1/otp/verify with error: " + str(e))
         return default_error
 
 # creation of user is handled here
