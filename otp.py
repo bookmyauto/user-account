@@ -60,10 +60,10 @@ class Otp:
                 cur.execute(sql_query)
                 conn.commit()
                 response            = Create.check_user_repetition(number)
-                if "present" in response:
-                    if response["present"]  == 1:
+                if "present" in response["data"]:
+                    if response["data"]["present"]  == 1:
                         result              = Response.make_response(200, "OTP matched", "OTP matched successfully", action = "login", match = 1)
-                    if response["present"]  == 0:
+                    if response["data"]["present"]  == 0:
                         result              = Response.make_response(200, "OTP matched", "OTP matched successfully", action = "signUp", match = 1)
                     logging.debug("OTP verified successfully")
                     conn.close()

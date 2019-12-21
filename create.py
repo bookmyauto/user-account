@@ -19,6 +19,7 @@ class Create:
             data            = cur.fetchone()
             logging.debug("Count is: " + str(data[0]))
             if int(data[0]) == 0:
+                conn.close()
                 result  = Response.make_response(200, "Phone number does not exist", "Phone number does not exist", present=0)
                 return result
             result      = Response.make_response(200, "Phone number already exists", "Phone number already exists", present=1)
