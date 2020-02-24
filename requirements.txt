@@ -4,3 +4,4 @@ pymysql
 flask
 flask_api
 requests
+pyjwt
