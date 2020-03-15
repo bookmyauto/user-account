@@ -36,7 +36,7 @@ logging.info("user account started")
 # --------------------------------------------------------------------------------------------------------------------------------------------- #
 @app.route("/v1")
 def working():
-    return default_error
+    return "user-account service running"
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------- #
@@ -72,7 +72,7 @@ def otp_verify():
             logging.info("  Response:\n" + str(response))
             with app.app_context():
                 response = make_response(response)
-            token    = requests.get("https://127.0.0.1:8080/v1/getJWT/" + str(number))
+            token    = requests.get("http://127.0.0.1:8080/v1/getJWT?number=" + str(number))
             token    = token.json()
             if token["data"]["token"] == "":
                 raise ValueError
@@ -142,7 +142,7 @@ def login():
         if request.method == "GET":
             logging.info("  Incoming request:\n" + str(request.args))
             number = request.args["number"]
-            response = requests.get("https://127.0.0.1:8080/v1/getJWT/" + str(number))
+            response = requests.get("https://127.0.0.1:8080/v1/getJWT?number=" + str(number))
             response = response.json()
             if response["data"]["token"] == "":
                 raise ValueError
