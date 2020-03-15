@@ -2,6 +2,7 @@
                 Description : main file for user account service
                 Author      : Rahul Tudu
 """
+from    flask   import make_response
 from    flask   import Flask
 from    flask   import request
 from    otp     import Otp
@@ -25,6 +26,8 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 default_error = json.dumps(
     {"errorCode": 500, "errorMessage": "System failure", "displayMessage": "Oops something went wrong !"})
+with app.app_context():
+    default_error = make_response(default_error)
 logging.info("user account started")
 
 
@@ -33,7 +36,7 @@ logging.info("user account started")
 # --------------------------------------------------------------------------------------------------------------------------------------------- #
 @app.route("/v1")
 def working():
-    return {"response": "user-account service running"}
+    return default_error
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------- #
@@ -47,6 +50,8 @@ def otp_create():
             logging.info("  Incoming request:\n" + str(request.args))
             response = json.dumps(Otp.create_otp(number))
             logging.info("  Response:\n" + str(response))
+            with app.app_context():
+                response = make_response(response)
             return response
     except RuntimeError as e:
         logging.critical("  Failure in v1/otp with error: " + str(e))
@@ -65,6 +70,14 @@ def otp_verify():
             user_otp = request.args["otp"]
             response = json.dumps(Otp.verify_otp(number, user_otp))
             logging.info("  Response:\n" + str(response))
+            with app.app_context():
+                response = make_response(response)
+            token    = requests.get("https://127.0.0.1:8080/v1/getJWT/" + str(number))
+            token    = token.json()
+            if token["data"]["token"] == "":
+                raise ValueError
+            else:
+                response.headers["token"] = token["data"]["token"]
             return response
     except RuntimeError as e:
         logging.critical("  Failure in v1/otp/verify with error: " + str(e))
@@ -82,6 +95,8 @@ def createuser():
             user_number = request.args["number"]
             response = Create.check_user_repetition(user_number)
             logging.info("  Response:\n" + str(response))
+            with app.app_context():
+                response = make_response(response)
             return response
         if request.method == "POST":
             logging.info("  Incoming request:\n" + str(request.args))
@@ -89,6 +104,8 @@ def createuser():
             user_number = request.form["number"]
             response = Create.create_user(user_number, user_name)
             logging.info("  Response:\n" + str(response))
+            with app.app_context():
+                response = make_response(response)
             return response
     except RuntimeError as e:
         logging.critical("  Failure in v1/createuser with error: " + str(e))
@@ -108,6 +125,8 @@ def updateuser():
             photo_link = request.form["profile_pic_link"]
             response = Create.update_user(number, name, photo_link)
             logging.info("  Response:\n" + str(response))
+            with app.app_context():
+                response = make_response(response)
             return response
     except RuntimeError as e:
         logging.critical("  Failure in v1/updateuser with error: " + str(e))
