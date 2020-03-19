@@ -10,15 +10,6 @@ from    create  import Create
 import  requests
 import  logging
 import  json
-import  ssl
-
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
-
 # --------------------------------------------------------------------------------------------------------------------------------------------- #
 #                                                       INITIALIZATION                                                                          #
 # --------------------------------------------------------------------------------------------------------------------------------------------- #
@@ -158,4 +149,4 @@ def login():
 #                                                       THE MAIN FUNCTION                                                                       #
 # --------------------------------------------------------------------------------------------------------------------------------------------- #
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=7002, ssl_context='adhoc')
+    app.run(host='0.0.0.0', debug=True, port=7002)
